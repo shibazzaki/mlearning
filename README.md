@@ -1,85 +1,108 @@
+---
+
+```markdown
 # Himalayan Expedition Success Prediction
 
-**Опис:**
-Це «мікро-Kaggle» змагання з прогнозування успіху гімалайських експедицій. Мета — на основі історичних даних експедицій і характеристик піків передбачити, чи буде хоча б одне сходження успішним.
+This notebook walks through a full pipeline—from data loading and EDA to model tuning and final deployment artifacts—for predicting whether a Himalayan expedition will summit at least one member.
 
-## 📂 Структура репозиторію
+---
+
+## 📁 Project Structure
 
 ```
-├── data/                    # CSV-файли з даними
-│   ├── exped.csv            # Інформація про експедиції
-│   ├── peaks.csv            # Характеристики піків
-│   ├── members.csv          # Інформація про учасників (опційно)
-│   ├── refer.csv            # Довідкові таблиці (peakid, expid)
-│   └── himalayan_data_dictionary.csv  # Словник полів
-│
-├── notebooks/               # Jupyter/Colab ноутбуки
-│   ├── 01_EDA.ipynb         # Дослідницький аналіз даних
-│   ├── 02_Preprocessing.ipynb # Попередня обробка та фічеринґ
-│   ├── 03_Modeling.ipynb    # Базові моделі та оцінка
-│   └── 04_Hyperparameter_Tuning.ipynb # Пошук гіперпараметрів
-│
-├── scripts/                 # Опціональні скрипти для запуску моделей
-│   └── train.py             # Приклад командного запуску тренування
-│
-├── requirements.txt         # Залежності проекту
-└── README.md                # Опис проекту (цей файл)
-```
 
-## ⚙️ Встановлення та запуск
+├── data/
+│   ├── exped.csv
+│   ├── peaks.csv
+│   ├── members.csv
+│   ├── refer.csv
+│   └── himalayan\_data\_dictionary.csv
+├── models/
+│   └── himalayan\_final\_rf.pkl
+├── submission.csv
+├── Himalayan.ipynb
+└── README.md
 
-1. Клонувати репозиторій:
+````
 
-   ```bash
-   git clone https://github.com/your-username/himalayan-expedition-prediction.git
-   cd himalayan-expedition-prediction
-   ```
-2. Встановити залежності:
+---
 
-   ```bash
-   pip install -r requirements.txt
-   ```
-3. Запустити ноутбук у Google Colab або локально через Jupyter:
+## 🛠️ Requirements
 
-   * В Google Colab: змонтувати Google Drive і вказати шлях до папки `data/`.
-   * Локально: переконатися, що CSV-файли у папці `data/`.
+- Python 3.7+
+- pandas  
+- numpy  
+- scikit-learn  
+- matplotlib, seaborn  
+- joblib  
 
-## 🗃️ Дані
+You can install via:
 
-* **exped.csv**: інформація про експедицію (рік, сезон, країна, маршрути, кількість учасників, успіх сходження, дати).
-* **peaks.csv**: характеристики піків (висота, регіон, обмеження, кількість попередніх сходжень).
-* **members.csv**: деталізована інформація про учасників (роль, досвід, дата смерті тощо).
-* **refer.csv**: довідкові таблиці для злиття (peakid, expid).
-* **himalayan\_data\_dictionary.csv**: довідник полів з описами колонок.
+```bash
+pip install pandas numpy scikit-learn matplotlib seaborn joblib
+````
 
-## 🚀 Етапи реалізації
+---
 
-1. **EDA**: перевірка пропусків, розподілів, кореляцій, баланс класів.
-2. **Попередня обробка**:
+## 🚀 How to run
 
-   * Заповнення пропусків (median для числових, `Unknown` для категоріальних).
-   * Кодування категоріальних змінних (OneHotEncoder).
-   * Можливе логарифмування аутлайєрів (`totmembers`, `highpoint`).
-3. **Моделювання**:
+1. **Mount your Google Drive** (if on Colab) or place the `data/` folder next to the notebook.
+2. Update the file paths in the very first cell, or rely on the default `low_memory=False` & `encoding='latin1'` parameters to read messy CSVs.
+3. Execute cells in order:
 
-   * Базова модель: `LogisticRegression`.
-   * Розширена модель: `RandomForestClassifier` або `GradientBoostingClassifier`.
-4. **Оцінка**:
+   1. **Environment setup** (imports, warnings suppression)
+   2. **Data loading & cleaning**
+   3. **Exploratory Data Analysis**
+   4. **Feature selection & engineering**
+   5. **Baseline modeling (LogisticRegression)**
+   6. **Advanced modeling & tuning (RandomForest + RandomizedSearchCV)**
+   7. **Aggregation of member-level stats**
+   8. **Final model training & evaluation**
+   9. **Save** `himalayan_final_rf.pkl` and **export** `submission.csv`
 
-   * Основна метрика: **ROC AUC**.
-   * Додаткові: **Accuracy**, **F1-score**.
-   * Крос-валідація з `StratifiedKFold`.
-5. **Тюнінг гіперпараметрів**: `GridSearchCV` / `RandomizedSearchCV`.
-6. **Фічеринґ** (опційно):
+---
 
-   * Додати статистики з members.csv (середній досвід, роль-лідера).
-   * Створити синергетичні фічі між маршрутами та регіоном.
+## 📊 Key Results
 
-## 📈 Приклад результатів
+| Model                                        |   ROC AUC |  Accuracy |  F1-score |
+| :------------------------------------------- | --------: | --------: | --------: |
+| Logistic Regression (baseline)               |     0.824 |     0.787 |     0.820 |
+| Random Forest (default params)               |     0.974 |     0.919 |     0.926 |
+| **Random Forest (tuned + members-features)** | **0.988** | **0.950** | **0.955** |
 
-* **Baseline (LogisticRegression)**: AUC ≈ 0.75
-* **Random Forest (100 дерев)**: AUC ≈ 0.82
+**Confusion Matrix (final model on test set):**
 
-*(Значення приведені як приклад. Реальні результати можуть відрізнятися.)*
+|                | Pred = 0 | Pred = 1 |
+| :------------: | :------: | :------: |
+| **Actual = 0** |    964   |    63    |
+| **Actual = 1** |    51    |   1207   |
 
+**Top 3 Features by Importance**
+
+1. `highpoint` (≈82 %)
+2. `totmembers` (≈5 %)
+3. engineered member features (mean age, % attempted summits), plus region/host
+
+---
+
+## ⚠️ Known Issues & Resolutions
+
+1. **UnicodeDecodeError & DtypeWarning**
+
+   * *Cause:* CSVs contained mixed encodings and mixed-type columns.
+   * *Fix:* Use `low_memory=False`, `encoding='latin1'` and explicit `dtype={…: str}` or suppress via `warnings.filterwarnings`.
+
+2. **Missing data in route/ascent columns**
+
+   * > 80 % values were null in `route3–4`, `ascent2–4`.
+   * *Action:* Dropped these features for baseline; revisit only if you engineer route-specific stats.
+
+3. **KeyError in members aggregation**
+
+   * *Cause:* original code assumed `role` & `msuccess` cols, but actual names were `leader`, `deputy`, `msmtbid`.
+   * *Fix:* Adjusted aggregation to use `leader`, `deputy`, `msmtbid`, `sex`, `yob`.
+
+4. **Highly correlated features**
+
+   * `smtdays` vs. `totdays` had r≈0.9 → dropped `smtdays` to avoid redundancy.
 
