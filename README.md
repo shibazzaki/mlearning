@@ -1,6 +1,3 @@
----
-
-```markdown
 # Himalayan Expedition Success Prediction
 
 This notebook walks through a full pipeline—from data loading and EDA to model tuning and final deployment artifacts—for predicting whether a Himalayan expedition will summit at least one member.
