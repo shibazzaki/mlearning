@@ -29,13 +29,14 @@ Build a binary classification model that, given expedition metadata (peak height
 ```
 
 ├── data/
-│   ├── exped.csv
-│   ├── peaks.csv
-│   ├── members.csv
-│   ├── refer.csv
-│   └── himalayan\_data\_dictionary.csv
+│ ├── exped.csv
+│ ├── peaks.csv
+│ ├── members.csv
+│ ├── refer.csv
+│ └── himalayan_data_dictionary.csv
 ├── models/
-│   └── himalayan\_final\_rf.pkl
+│ ├── himalayan_final_rf.pkl
+│ └── himalayan_rf.pkl # (previous model version)
 ├── submission.csv
 ├── Himalayan.ipynb
 └── README.md
