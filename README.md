@@ -137,6 +137,3 @@ pip install pandas numpy scikit-learn matplotlib seaborn joblib
 * **\[TESTS]** Write pytest tests for pipeline & API
 
 Feel free to open these as issues in your repository and check them off as you go. Good luck! 🚀
-
-```
-```
